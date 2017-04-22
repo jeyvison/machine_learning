@@ -45,6 +45,7 @@ class LearningAgent(Agent):
 		self.epsilon = 0
 		self.alpha = 0
 	else:
+		#self.epsilon = self.epsilon - 0.05
 		self.epsilon = self.epsilon * pow(self.epsilon,0.01)
 
         return self.epsilon
@@ -108,6 +109,7 @@ class LearningAgent(Agent):
         # Set the agent state and default action
         self.state = state
         self.next_waypoint = self.planner.next_waypoint()
+	testing = self.env.trial_data['testing']
 
         ########### 
         ## TO DO ##
@@ -115,6 +117,9 @@ class LearningAgent(Agent):
         # When not learning, choose a random action
         # When learning, choose a random action with 'epsilon' probability
         #   Otherwise, choose an action with the highest Q-value for the current state
+
+	if testing == True:
+		return self.get_maxQ(state)
 
 	if self.learning == False:
 		action = random.choice(self.valid_actions)
@@ -126,7 +131,6 @@ class LearningAgent(Agent):
 		
 		maxQAction = self.get_maxQ(state)
 		action = maxQAction
-		#action = numpy.random.choice(self.valid_actions,p=numpy.full(len(self.valid_actions),self.epsilon))
 
         return action
 
@@ -180,7 +184,7 @@ def run():
     #    * epsilon - continuous value for the exploration factor, default is 1
     #    * alpha   - continuous value for the learning rate, default is 0.5
     #agent = env.create_agent(LearningAgent)
-    agent = env.create_agent(LearningAgent,learning=True,alpha=0.3,epsilon=0.5)
+    agent = env.create_agent(LearningAgent,learning=True,alpha=0.7,epsilon=0.9)
     
     ##############
     # Follow the driving agent
@@ -197,7 +201,7 @@ def run():
     #   log_metrics  - set to True to log trial and simulation results to /logs
     #   optimized    - set to True to change the default log file name
     #sim = Simulator(env)
-    sim = Simulator(env,update_delay=0.1,log_metrics=True,optimized=True)
+    sim = Simulator(env,update_delay=0.01,log_metrics=True,optimized=True)
     ##############
     # Run the simulator
     # Flags:
